@@ -32,6 +32,10 @@ public class Character : MonoBehaviour {
 		if( Input.GetKey(KeyCode.Alpha3)){
 			Time.timeScale = 0.1f;
 		}
+
+		if( Input.GetKey(KeyCode.R)){
+			Reset();
+		}
 	}
 
 	void FixedUpdate(){
@@ -65,6 +69,15 @@ public class Character : MonoBehaviour {
 		Debug.DrawRay(transform.position, GravityForceVector / Mass, Color.green/2);
 		Debug.DrawRay(transform.position, ProjectedGravityForceVector / Mass, Color.green);
 		Debug.DrawRay(transform.position + transform.up * 0.1f, SumForce / Mass, Color.white);
+	}
+
+	private void Reset(){
+		Speed = 0;
+		Acceleration = 0;
+		Position = 0;
+		InputDir = 0;
+		transform.position = PutOnCircle(0, Radius);
+		transform.rotation = Quaternion.identity;
 	}
 
 	private Vector2 PutOnCircle(float angle, float radius){
