@@ -9,38 +9,62 @@ public class Character : MonoBehaviour {
 	[SerializeField] private float Mass = 10f;
 	[SerializeField] private float Friction = 0.95f;
 	[SerializeField] private float InputForce = 1;
+	[SerializeField] private float InputAcceleration = 1;
 
-	private Vector2 Speed = Vector2.zero;
-	private Vector2 Acceleration;
-	private Vector2 Position = Vector3.zero;
+	private float Speed = 0;
+	private float Acceleration;
+	private float Position;
+	private int InputDir;
 
 	void Update () {
-
-		int inputDir = 0;
 		if( Input.GetKey(KeyCode.LeftArrow)){
-			inputDir = -1;
+			InputDir = -1;
 		}else if( Input.GetKey(KeyCode.RightArrow)){
-			inputDir = 1;
+			InputDir = 1;
+		}else{
+			InputDir = 0;
 		}
+
+		if( Input.GetKey(KeyCode.Alpha1)){
+			Time.timeScale = 1;
+		}
+
+		if( Input.GetKey(KeyCode.Alpha3)){
+			Time.timeScale = 0.1f;
+		}
+	}
+
+	void FixedUpdate(){
 
 		// F = M * a
 		// Fg = M * g
 
-		Vector2 InputForceVector = transform.right * inputDir * InputForce;
-		Vector2 GravityForceVector = Vector3.Project(Vector2.down * Gravity * Mass, transform.right);
-		Vector2 SumForce = InputForceVector + GravityForceVector;
+		Vector2 InputForceVector = transform.right * InputDir * InputForce;
+//		Vector2 InputForceVector = transform.right * InputDir * InputAcceleration * Mass;
+		Vector2 GravityForceVector = Vector2.down * Gravity * Mass;
+		Vector2 ProjectedGravityForceVector = Vector3.Project(GravityForceVector, transform.right);
+		Vector2 SumForce = InputForceVector + ProjectedGravityForceVector;
 
-		Acceleration = SumForce / Mass;
+		float moveDir = Vector3.Dot(SumForce,transform.right) > 0 ? 1 : -1;
+
+		Acceleration = SumForce.magnitude * moveDir / 22.92f / Mass;
 
 		Speed += Acceleration;
 		Speed *= Friction;
 		Position += Speed;
-		Position.y = 0;
 
-		transform.position = (Vector3)Position;
+//		transform.position = Vector3.right * Position;
 
-//		transform.position = PutOnCircle(Angle, Radius);
-//		transform.rotation = Quaternion.Euler(new Vector3(0, 0, Angle));
+		Angle = (Position * 180f) / (Mathf.PI * Radius);
+//		Angle = Position;
+
+		transform.position = PutOnCircle(Angle, Radius);
+		transform.rotation = Quaternion.Euler(new Vector3(0, 0, Angle));
+	
+		Debug.DrawRay(transform.position, InputForceVector / Mass, Color.red);
+		Debug.DrawRay(transform.position, GravityForceVector / Mass, Color.green/2);
+		Debug.DrawRay(transform.position, ProjectedGravityForceVector / Mass, Color.green);
+		Debug.DrawRay(transform.position + transform.up * 0.1f, SumForce / Mass, Color.white);
 	}
 
 	private Vector2 PutOnCircle(float angle, float radius){

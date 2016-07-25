@@ -131,7 +131,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Angle: 0
   Radius: 2.5
-  Gravity: 9.81
-  Mass: 10
-  Friction: 0.95
-  InputForce: 1
+  Gravity: 0.981
+  Mass: 1.3
+  Friction: 0.925
+  InputForce: 1.17
+  InputAcceleration: 0.9
